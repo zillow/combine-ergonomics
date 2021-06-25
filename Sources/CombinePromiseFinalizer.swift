@@ -6,18 +6,22 @@ public class PromiseFinalizer<P: Publisher, S: Scheduler> {
 
     // MARK: - Public
 
+    /// Attach a closure to handle the error arising from a publisher. This closure will run on `DispatchQueue.main`
+    /// - Parameter handler: the closure to execute on failure
+    /// - Returns: `PromiseFinalizer` that can receive a `finally` block
     @discardableResult
     public func `catch`(_ handler: @escaping (P.Failure) -> Void) -> PromiseFinalizer<P, S> {
         subscriber.setErrorHandler(handler)
         return self
     }
 
-    /// Use this method to deliberately end the promise chain, swallowing any errors along the way.
+    /// Deliberately ends the future chain, swallowing any errors along the way.
     public func cauterize() {
         return
     }
 
     /// Use this method to execute a closure after the chain has completed
+    /// - Parameter handler: The closure to execute after the chain has completed
     public func finally(_ handler: @escaping () -> Void) {
         subscriber.setCompletionHandler(handler)
     }
