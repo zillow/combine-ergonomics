@@ -1,0 +1,60 @@
+version: 2.1
+
+workflows:
+  test:
+    jobs:
+      - test
+
+jobs:
+  test:
+    executor: mac-executor
+    steps:
+      - checkout-and-restore-caches
+      - run:
+          name: Set up derived data directory for code coverage files
+          command: |
+            mkdir 'derived_data'
+            echo 'export DERIVED_DATA_DIRECTORY="$CIRCLE_WORKING_DIRECTORY/derived_data"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Set up Code Climate test coverage reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-xccov-beta-darwin-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+            ./cc-test-reporter before-build
+      - run:
+          name: Run unit tests
+          command: swift test --enable-code-coverage
+
+executors:
+  mac-executor:
+    macos:
+      xcode: "12.5.0"
+    working_directory: /Users/distiller/project
+    environment:
+      FL_OUTPUT_DIR: output
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 12
+    shell: /bin/bash --login -eo pipefail
+
+commands:
+  checkout-and-restore-caches:
+    description: "This command restores caches, checks out code, and performs general setup before a build."
+    parameters:
+      source-cache-version:
+        type: integer
+        default: 0
+    steps:
+      # Repo cache
+      - restore_cache:
+          name: Restore repo cache
+          keys:
+            - source-v<< parameters.source-cache-version >>-{{ .Branch }}-{{ .Revision }}
+            - source-v<< parameters.source-cache-version >>-{{ .Branch }}-
+            - source-v<< parameters.source-cache-version >>-
+      - checkout
+      - save_cache:
+          name: Save repo cache
+          key: source-v<< parameters.source-cache-version >>-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
