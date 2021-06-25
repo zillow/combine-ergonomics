@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 /// This helper class subscribes to a single value emitted from the publisher (promise) then completes
-class CombinePromiseSubscriber<P: Publisher>: Subscriber {
+class PromiseSubscriber<P: Publisher>: Subscriber {
 
     // MARK: - Internal
 
