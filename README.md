@@ -70,7 +70,7 @@ class LoginHelper {
         let future = Future<User, Error> { promise in
             // network call to log in
         }
-        future1.then { user -> Future<ProfileImage, Error> in
+        future.then { user -> Future<ProfileImage, Error> in
             return ProfileImageHelper.fetchProfileImage(for: user)
         }.done { profileImage in 
             // update UI with new profile image
