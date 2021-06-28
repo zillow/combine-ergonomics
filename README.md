@@ -10,7 +10,7 @@ To add this package to your project, go into your project settings and add the u
 
 ### Attach handlers to Publishers
 
-CombineErgonomics makes it easier to dispatch background tasks and handle their errors, with syntax inspired by [PromiseKit](https://github.com/mxcl/PromiseKit). For example, consider this class that facilites login:
+CombineErgonomics makes it easier to dispatch background tasks and handle their errors, with syntax inspired by [PromiseKit](https://github.com/mxcl/PromiseKit). For example, consider this class that facilitates login:
 ```swift
 import Combine
 
