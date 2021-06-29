@@ -1,5 +1,6 @@
 import Combine
 import XCTest
+import CombineErgonomicsTestExtensions
 @testable import CombineErgonomics
 
 class CombineErgonomicsTests: XCTestCase {

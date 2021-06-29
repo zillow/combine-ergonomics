@@ -1,5 +1,5 @@
-#if DEBUG
 import Combine
+import CombineErgonomics
 import XCTest
 
 public extension XCTestCase {
@@ -86,5 +86,3 @@ public extension XCTestCase {
         }
     }
 }
-
-#endif
