@@ -10,21 +10,38 @@ let package = Package(
         .watchOS(.v6)
     ],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "CombineErgonomics",
-            targets: ["CombineErgonomics"]),
+            targets: ["CombineErgonomics"]
+        ),
+        .library(
+            name: "CombineErgonomicsTestExtensions",
+            targets: ["CombineErgonomicsTestExtensions"]
+        )
     ],
     dependencies: [],
     targets: [
         .target(
             name: "CombineErgonomics",
             dependencies: [],
-            path: "Sources"
+            path: "Sources",
+            exclude: ["XCTestExtensions.swift"]
+        ),
+        .target(
+            name: "CombineErgonomicsTestExtensions",
+            dependencies: ["CombineErgonomics"],
+            path: "Sources",
+            // Excludes are enumerated manually here to stifle an Xcode workspace warning.
+            exclude: [
+                "CancellableStoring.swift",
+                "PromiseFinalizer.swift",
+                "PromiseSubscriber.swift",
+                "PublisherExtensions.swift"
+            ]
         ),
         .testTarget(
             name: "CombineErgonomicsTests",
-            dependencies: ["CombineErgonomics"],
+            dependencies: ["CombineErgonomics", "CombineErgonomicsTestExtensions"],
             path: "Tests"
         )
     ]
