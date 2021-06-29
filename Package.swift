@@ -29,7 +29,7 @@ let package = Package(
         ),
         .target(
             name: "CombineErgonomicsTestExtensions",
-            dependencies: ["CombineErgonomics"],
+            dependencies: [],
             path: "Sources",
             // Excludes are enumerated manually here to stifle an Xcode workspace warning.
             exclude: [

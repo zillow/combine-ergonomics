@@ -1,5 +1,4 @@
 import Combine
-import CombineErgonomics
 import XCTest
 
 public extension XCTestCase {
@@ -18,10 +17,10 @@ public extension XCTestCase {
         let expectation = XCTestExpectation(description: "Publisher")
         expectation.expectedFulfillmentCount = expectedNumber
         var values: [T] = []
-        publisher.dropFirst(dropFirst).sink { value in
+        let cancellable = publisher.dropFirst(dropFirst).sink { value in
             expectation.fulfill()
             values.append(value)
-        }.store(in: &store)
+        }
         closure()
         wait(for: [expectation], timeout: 2)
         return values
@@ -35,9 +34,9 @@ public extension XCTestCase {
     where P.Output == T, P.Failure == Never {
         let expectation = XCTestExpectation(description: "signal")
         expectation.isInverted = true
-        publisher.dropFirst(dropFirst).sink { _ in
+        let cancellable = publisher.dropFirst(dropFirst).sink { _ in
             expectation.fulfill()
-        }.store(in: &store)
+        }
         closure()
         wait(for: [expectation], timeout: 2)
     }
@@ -46,11 +45,11 @@ public extension XCTestCase {
     func waitUntilFalse<P: Publisher>(_ publisher: P)
     where P.Output == Bool, P.Failure == Never {
         let expectation = XCTestExpectation(description: "value is false")
-        publisher.sink { value in
+        let cancellable = publisher.sink { value in
             if !value {
                 expectation.fulfill()
             }
-        }.store(in: &store)
+        }
         wait(for: [expectation], timeout: 2)
     }
 
