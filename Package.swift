@@ -35,7 +35,7 @@ let package = Package(
             exclude: [
                 "CancellableStoring.swift",
                 "PromiseFinalizer.swift",
-                "PromiseSubscriber.swift",
+                "SingleValueSubscriber.swift",
                 "PublisherExtensions.swift"
             ]
         ),

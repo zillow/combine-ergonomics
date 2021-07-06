@@ -29,7 +29,7 @@ public class PromiseFinalizer<P: Publisher, S: Scheduler> {
     // MARK: - Internal
 
     init(_ publisher: P, scheduler: S, handler: ((P.Output) -> Void)?) {
-        subscriber = PromiseSubscriber(valueHandler: handler, errorHandler: nil)
+        subscriber = SingleValueSubscriber(valueHandler: handler, errorHandler: nil)
         DispatchQueue.main.async {
             publisher
                 .subscribe(on: scheduler)
@@ -40,5 +40,5 @@ public class PromiseFinalizer<P: Publisher, S: Scheduler> {
 
     // MARK: - Private
 
-    private let subscriber: PromiseSubscriber<P>
+    private let subscriber: SingleValueSubscriber<P>
 }
