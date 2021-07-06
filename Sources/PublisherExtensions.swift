@@ -75,8 +75,8 @@ public extension Publisher where Output == Void {
     ///   - scheduler: `DispatchQueue` or other `Scheduler` on which the publisher executes
     ///   - handler: The closure to run once the publisher has executed. Returns a new `Publisher`.
     /// - Returns: `Publisher` that can be subscribed to
-    func then<P: Publisher, S: Scheduler>(on scheduler: S, handler: @escaping () -> P) -> Publishers.FlatMap<P, Publishers.SubscribeOn<Self, S>> {
-        subscribe(on: scheduler).flatMap(handler)
+    func then<P: Publisher, S: Scheduler>(on scheduler: S, handler: @escaping () -> P) -> Publishers.SubscribeOn<Publishers.FlatMap<P, Self>, S> {
+        flatMap(handler).subscribe(on: scheduler)
     }
 
     /// Add a closure to be executed after the publisher runs on a `Scheduler`, and then return another publisher to run afterwards.
