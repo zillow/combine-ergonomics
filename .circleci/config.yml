@@ -4,6 +4,12 @@ workflows:
   test:
     jobs:
       - test
+      - release:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
 
 jobs:
   test:
@@ -25,11 +31,26 @@ jobs:
       - run:
           name: Run unit tests
           command: swift test --enable-code-coverage
+  release:
+    executor: mac-executor
+    steps:
+      - checkout-and-restore-caches
+      - run: 
+          name: Install homebrew
+          command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      - run:
+          name: Install Swift documentation generator
+          command: brew install swiftdocorg/formulae/swift-doc
+      - run:
+          name: Generate Swift Documentation
+          command: |
+            mkdir -p docs
+            swift-doc generate ./Sources --module-name CombineErgonomics --format html --output ./docs
 
 executors:
   mac-executor:
     macos:
-      xcode: "12.5.0"
+      xcode: "12.5.1"
     working_directory: /Users/distiller/project
     environment:
       FL_OUTPUT_DIR: output
