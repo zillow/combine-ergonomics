@@ -4,7 +4,7 @@
 
 This package contains useful extensions for Combine that make it easier to develop with and test.
 
-To add this package to your project, go into your project settings and add the url `https://github.com/StreetEasy/combine-ergonomics.git` to your Swift Packages. To use it, just `import CombineErgonomics` at the top of your swift files.
+To add this package to your project, go into your project settings and add the url `https://github.com/StreetEasy/combine-ergonomics.git` to your Swift Packages. To use it, just `import CombineErgonomics` at the top of your swift files. To use the `XCTestCase` extensions, `import CombineErgonomicsTestExtensions`.
 
 ## Benefits
 
@@ -75,8 +75,71 @@ class LoginHelper {
         }.done { profileImage in 
             // update UI with new profile image
         }.catch { error in
-            //handleError
+            // handle error
         }
+    }
+}
+```
+
+### Unit test published values
+
+One common pattern used in reactive programming, and especially in MVVM app architecture is binding the view's state to observable values on a view model. Testing these view model properties can be a bit messy when asynchronous code is involved.
+
+```swift
+import Combine
+import CombineErgonomics
+import XCTest
+
+class LoginViewModel {
+    @Published var user: User?
+    @Published var isLoading = false
+
+    func login() {
+        self.isLoading = true
+        NetworkHelper.login().done { user in
+            self.user = user
+        }.finally { 
+            self.isLoading = false
+        }
+    }
+}
+
+class LoginViewModelTests: XCTestCase { 
+
+    func testLogin() {
+        let loginViewModel = LoginViewModel()
+        let loadingExpectation = XCTestExpectation(description: "View model starts loading, then finishes")
+        loadingExpectation.expectedFulfillmentCount = 2
+        var values: [Bool] = []
+        let cancellable = loginViewModel.$isLoading.dropFirst(1).sink { isLoading in
+            expectation.fulfill()
+            values.append(isLoading)
+        }
+        loginViewModel.login()
+        wait(for: [loadingExpectation], timeout: 1)
+        XCTAssertEqual(values, [true, false])
+        XCTAssertNotNil(loginViewModel.user)
+    }
+}
+```
+
+With the test extensions, the login test case can be reduced to something much more readable, allowing you to focus on the actual logic being tested.
+
+```swift
+import Combine
+import CombineErgonomics
+import CombineErgonomicsTestExtensions
+import XCTest
+
+class LoginHelperTests: XCTestCase { 
+
+    func testLogin() {
+        let loginViewModel = LoginViewModel()
+        let values = values(for: loginViewModel.$isLoading, expectedNumber: 2) {
+            loginViewModel.login()
+        }
+        XCTAssertEqual(values, [true, false])
+        XCTAssertNotNil(loginViewModel.user)
     }
 }
 ```
