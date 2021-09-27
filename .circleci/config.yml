@@ -3,14 +3,13 @@ version: 2.1
 workflows:
   test:
     jobs:
-      - release
-      # - test
-      # - release:
-      #     requires:
-      #       - test
-      #     filters:
-      #       branches:
-      #         only: main
+      - test
+      - release:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
 
 jobs:
   test:
@@ -53,11 +52,11 @@ jobs:
           name: Install Swift documentation generator
           command: brew install swiftdocorg/formulae/swift-doc
       - run:
-          name: Generate Swift Documentation
+          name: Generate and Upload Swift Documentation
           command: |
             mkdir -p docs
             swift-doc generate ./Sources --module-name CombineErgonomics --format html --output ./docs
-
+            aws s3 cp ./docs s3://combine-ergonomics-framework-docs --recursive
 executors:
   mac-executor:
     macos:

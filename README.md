@@ -141,3 +141,7 @@ class LoginHelperTests: XCTestCase {
     }
 }
 ```
+
+##Documentation
+
+You can find [more detailed documentation here](http://combine-ergonomics-framework-docs.s3-website-us-east-1.amazonaws.com/).
