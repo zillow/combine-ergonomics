@@ -37,16 +37,26 @@ jobs:
       - checkout-and-restore-caches
       - run: 
           name: Install homebrew
-          command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+          command: HOMEBREW_NO_AUTO_UPDATE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      - run: 
+          name: Install AWS package for this user
+          command: |
+            curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+            installer -pkg AWSCLIV2.pkg \
+              -target CurrentUserHomeDirectory \
+              -applyChoiceChangesXML ./aws.xml
+            ln -s ~/aws-cli/aws /usr/local/bin/aws
+            ln -s ~/aws-cli/aws_completer /usr/local/bin/aws_completer
+            aws --version
       - run:
           name: Install Swift documentation generator
           command: brew install swiftdocorg/formulae/swift-doc
       - run:
-          name: Generate Swift Documentation
+          name: Generate and Upload Swift Documentation
           command: |
             mkdir -p docs
             swift-doc generate ./Sources --module-name CombineErgonomics --format html --output ./docs
-
+            aws s3 cp ./docs s3://combine-ergonomics-framework-docs --recursive
 executors:
   mac-executor:
     macos:
@@ -59,7 +69,7 @@ executors:
 
 commands:
   checkout-and-restore-caches:
-    description: "This command restores caches, checks out code, and performs general setup before a build."
+    description: "This command restores caches for dependencies, checks out code, and performs general setup before a build."
     parameters:
       source-cache-version:
         type: integer
@@ -78,4 +88,3 @@ commands:
           key: source-v<< parameters.source-cache-version >>-{{ .Branch }}-{{ .Revision }}
           paths:
             - ".git"
-
