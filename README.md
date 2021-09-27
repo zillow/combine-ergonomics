@@ -98,7 +98,7 @@ class LoginViewModel {
         self.isLoading = true
         NetworkHelper.login().done { user in
             self.user = user
-        }.finally { 
+        }.finally {
             self.isLoading = false
         }
     }
@@ -126,8 +126,6 @@ class LoginViewModelTests: XCTestCase {
 With the test extensions, the login test case can be reduced to something much more readable, allowing you to focus on the actual logic being tested.
 
 ```swift
-import Combine
-import CombineErgonomics
 import CombineErgonomicsTestExtensions
 import XCTest
 
