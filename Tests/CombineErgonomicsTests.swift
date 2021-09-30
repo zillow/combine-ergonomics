@@ -18,7 +18,7 @@ class CombineErgonomicsTests: XCTestCase {
             }
         }
         future.run()
-        wait(for: [expectation], timeout: 0.3)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testDoneWithNeverErrorResultType() {
@@ -27,7 +27,7 @@ class CombineErgonomicsTests: XCTestCase {
         future.done {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.3)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testDoneWithErrorResultTypeStillRuns() {
@@ -36,7 +36,7 @@ class CombineErgonomicsTests: XCTestCase {
         future.done {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.3)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testDoneWithErrorResultTypeAndReturnsError() {
@@ -72,7 +72,7 @@ class CombineErgonomicsTests: XCTestCase {
             results.append(value)
             expectation.fulfill()
         }.cauterize()
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertEqual(results, [0, 1, 2])
     }
 
@@ -94,7 +94,29 @@ class CombineErgonomicsTests: XCTestCase {
         }.catch { _ in
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertEqual(results, [0])
+    }
+
+    func testFinally() {
+        var expectation = XCTestExpectation(description: "Finally block executes after success")
+        timeDelayedFuture(result: Failable.success(()), after: 0.1).done {
+            // Do nothing
+        }.catch { _ in
+            // Do nothing
+        }.finally {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1)
+
+        expectation = XCTestExpectation(description: "Finally block executes after failure")
+        timeDelayedFuture(result: Failable<Void>.failure(TestError()), after: 0.1).done {
+            // Do nothing
+        }.catch { _ in
+            // Do nothing
+        }.finally {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1)
     }
 }
