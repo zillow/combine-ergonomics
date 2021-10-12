@@ -36,7 +36,8 @@ let package = Package(
                 "CancellableStoring.swift",
                 "PromiseFinalizer.swift",
                 "SingleValueSubscriber.swift",
-                "PublisherExtensions.swift"
+                "PublisherExtensions.swift",
+                "FutureExtensions.swift"
             ]
         ),
         .testTarget(
