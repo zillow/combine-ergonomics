@@ -119,4 +119,28 @@ class CombineErgonomicsTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 1)
     }
+
+    func testMapToFuture() {
+        let successFuture = timeDelayedFuture(result: Failable.success(0), after: 0.1)
+        let successExpectation = XCTestExpectation(description: "String value is returned")
+        successFuture
+            .mapToFuture { "\($0)" }
+            .done { result in
+            if result == "0" {
+                successExpectation.fulfill()
+            }
+        }.cauterize()
+        wait(for: [successExpectation], timeout: 1)
+
+        let errorFuture = timeDelayedFuture(result: Failable<Int>.failure(TestError()), after: 0.1)
+        let errorExpectation = XCTestExpectation(description: "Error value is propagated")
+        let unexpectedSuccessExpectation = XCTestExpectation(description: "We don't expect a result value")
+        unexpectedSuccessExpectation.isInverted = true
+        errorFuture.mapToFuture { "\($0)" }.done { _ in
+            unexpectedSuccessExpectation.fulfill()
+        }.catch { _ in
+            errorExpectation.fulfill()
+        }
+        wait(for: [errorExpectation, unexpectedSuccessExpectation], timeout: 1)
+    }
 }
