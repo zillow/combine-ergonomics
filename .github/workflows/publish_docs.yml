@@ -1,0 +1,28 @@
+name: Publish Docs
+
+on: 
+  push:
+    branch: [ feature/github-action-migration ]
+
+jobs:
+  generate_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Docs folder
+        run: mkdir -p docs
+      - name: Generate SwiftDoc
+        uses: SwiftDocOrg/swift-doc@master
+        with:
+          inputs: Sources
+          module-name: CombineErgonomics
+          format: html
+          output: ./docs
+      - name: Update folder permissions
+        run: sudo chown -R runner ./docs
+      - name: Upload Swift Documentation to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+        run: aws s3 cp ./docs s3://combine-ergonomics-framework-docs --recursive
