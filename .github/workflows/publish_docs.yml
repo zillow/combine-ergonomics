@@ -1,9 +1,9 @@
 name: Publish Docs
 
 on: 
-  push:
-    branch: [ feature/github-action-migration ]
-
+  release:
+    types: [ created ]
+  
 jobs:
   generate_docs:
     runs-on: ubuntu-latest
