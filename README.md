@@ -4,7 +4,7 @@
 
 This package contains useful extensions for Combine that make it easier to develop with and test.
 
-To add this package to your project, go into your project settings and add the url `https://github.com/StreetEasy/combine-ergonomics.git` to your Swift Packages. To use it, just `import CombineErgonomics` at the top of your swift files. To use the `XCTestCase` extensions, `import CombineErgonomicsTestExtensions`.
+To add this package to your project, go into your project settings and add the url `https://github.com/zillow/combine-ergonomics.git` to your Swift Packages. To use it, just `import CombineErgonomics` at the top of your swift files. To use the `XCTestCase` extensions, `import CombineErgonomicsTestExtensions`.
 
 ## Benefits
 
