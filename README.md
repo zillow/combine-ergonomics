@@ -1,5 +1,5 @@
 # CombineErgonomics
-[![StreetEasy](https://circleci.com/gh/StreetEasy/combine-ergonomics.svg?style=shield&circle-token=213a75d2855fa385609c78813b678aa8edcabd25)](https://app.circleci.com/pipelines/github/StreetEasy/combine-ergonomics)
+![Tests](https://github.com/zillow/combine-ergonomics/actions/workflows/build_and_test.yml/badge.svg)
 ![](https://img.shields.io/badge/spm-compatible-green.svg)
 
 This package contains useful extensions for Combine that make it easier to develop with and test.
